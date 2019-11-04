@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [[ ! -d "$pwd/venv/" ]]; then
+    python3 -m venv venv
+    source venv/bin/activate
+else
+    source venv/bin/activate
+fi
+
+printf "Youtube playlist downloader helper\n\n"
+read -p 'Enter / Paste url to youtube playlist: ' playlist_url
+
+while [[ $playlist_url = "" ]]; do
+    read -p 'Url cant be blank. Enter / Paste url to youtube playlist: ' playlist_url
+done
+
+printf '\n\nYoutube downloader helper offers the following easier methods of downloading your playlists. Choose one'
+printf '\n\n1. Download playlist starting at ending at (start at video 2 end at video 7)'
+printf '\n2. Download specific videos (Video 1 , 3, 7 ... (Enter video numbers seperated by ",")'
+printf '\n3. Download videos containing a given keyword in their title\n\n'
+
+read -p '   Enter your choice: ' choice
+
+case $choice in
+
+  1)
+    read -p ' Enter start video no: ' start_video
+    read -p ' Enter end video no: ' end_video
+
+    youtube-dl --playlist-start $start_video --playlist-end $end_video $playlist_url
+
+    ;;
+
+  2)
+    read -p ' Enter video numbers (1, 3, 2 ,7)' videos_numbers
+    videos_numbers="$(echo -e "${videos_numbers}" | tr -d '[:space:]')"
+
+    youtube-dl --playlist-items $videos_numbers $playlist_url
+    ;;
+
+  3)
+    read -p ' Enter search keyword (python)' search_term
+    echo $search_term
+    youtube-dl --match-title $search_term $playlist_url
+    ;;
+
+  *)
+    echo -n "Invalid choice \n"
+    read -p '   Enter your choice: ' choice
+    ;;
+esac
+
+
